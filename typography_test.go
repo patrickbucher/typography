@@ -19,6 +19,8 @@ func TestBeautify(t *testing.T) {
             `«What a beautiful day», he said.`},
         {`He said: "She said: 'Don't be a fool!'"`,
             `He said: «She said: ‹Don’t be a fool!›»`},
+        {`"Ну что...", сказал он -- и молчал.`,
+            `«Ну что…», сказал он – и молчал.`},
     }
     for _, test := range tests {
         got := Beautify(test.input)
