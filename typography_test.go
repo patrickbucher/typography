@@ -5,25 +5,37 @@ import "testing"
 func TestBeautify(t *testing.T) {
     tests := []struct {
         input string
+        quoteStyle QuoteStyle
         expected string
     }{
-        {"...", "…"},
-        {"---", "—"}, // \u2013
-        {"--", "–"}, // \u2014
-        {"This is... a test.", "This is… a test."},
-        {"This is -- a test.", "This is – a test."},
-        {"This is---a test.", "This is—a test."},
+        {"...", 0, "…"},
+        {"---", 0, "—"}, // \u2013
+        {"--", 0, "–"}, // \u2014
+        {"This is... a test.", 0, "This is… a test."},
+        {"This is -- a test.", 0, "This is – a test."},
+        {"This is---a test.", 0, "This is—a test."},
         {"This... is -- a---test... well---you know.",
+            0,
             "This… is – a—test… well—you know."},
         {`"What a beautiful day", he said.`,
+            Guillemets,
             `«What a beautiful day», he said.`},
         {`He said: "She said: 'Don't be a fool!'"`,
+            Guillemets,
             `He said: «She said: ‹Don’t be a fool!›»`},
         {`"Ну что...", сказал он -- и молчал.`,
+            Guillemets,
             `«Ну что…», сказал он – и молчал.`},
+        {`"Let's 'do' a test."`, English, "“Let’s ‘do’ a test.”"},
+        {`"Let's 'do' a test."`, German, "„Let’s ‚do‘ a test.“"},
+        {`"Let's 'do' a test."`, Guillemets, "«Let’s ‹do› a test.»"},
+        {`"Let's 'do' a test."`, ReverseGuillemets, "»Let’s ›do‹ a test.«"},
+        {`"Noch ein Test."`, English, `“Noch ein Test.”`},
+        {`"Noch ein Test."`, German, `„Noch ein Test.“`},
+        {`"Noch ein Test."`, ReverseGuillemets, `»Noch ein Test.«`},
     }
     for _, test := range tests {
-        got := Beautify(test.input)
+        got := Beautify(test.input, test.quoteStyle)
         if  got != test.expected {
             t.Errorf("Beautify(\"%s\") got: %s, expected: %s",
                 test.input, got, test.expected)
@@ -34,6 +46,6 @@ func TestBeautify(t *testing.T) {
 func BenchmarkBeautify(b *testing.B) {
     str := `He said: "She said: 'Don't be... such a---'"`
     for i := 0; i <= b.N; i++ {
-        Beautify(str)
+        Beautify(str, 0)
     }
 }
