@@ -92,7 +92,7 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
             out<- '\u2026'
             buf = buf[3:]
         } else if nbuf >= 1 && buf[0] == '"' {
-            // "" to «»
+            // "" to double quotes according to the rule
             if last == 0 || unicode.IsSpace(last) {
                 out<- rule.double.opening
             } else {
@@ -101,8 +101,9 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
             last = buf[0]
             buf = buf[1:]
         } else if nbuf >= 1 && buf[0] == '\'' {
-            // '' to ‹› or don't to don’t
+            // '' to single quotes according to the rule...
             if nbuf >= 2 && unicode.IsLetter(last) &&
+                // ...and don't to don’t
                 unicode.IsLetter(buf[1]) {
                 out<- '’'
             } else if last == 0 || unicode.IsSpace(last) || last == '"' {
