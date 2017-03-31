@@ -31,9 +31,13 @@ func TestBeautify(t *testing.T) {
         {`"Noch ein Test."`, ReverseGuillemets, `»Noch ein Test.«`},
         {`He said: "Won't this be---the only---'complete' test...?"`, English,
             `He said: “Won’t this be—the only—‘complete’ test…?”`},
-        {`Er hat g'sagt: "Wui des net -- der oanzig -- 'komplette' Test...?"`,
+        {`Er hat g'sagt: "Sui des net -- d oanzig -- 'komplette' Test...?"`,
             German,
-            `Er hat g’sagt: „Wui des net – der oanzig – ‚komplette‘ Test…?“`},
+            `Er hat g’sagt: „Sui des net – d oanzig – ‚komplette‘ Test…?“`},
+        {`Rock'n'Roll`, English, `Rock’n’Roll`},
+        {`Rock'n'Roll`, German, `Rock’n’Roll`},
+        {`Rock'n'Roll`, Guillemets, `Rock’n’Roll`},
+        {`Rock'n'Roll`, ReverseGuillemets, `Rock’n’Roll`},
     }
     for _, test := range tests {
         got := Beautify(test.input, test.quoteStyle)
