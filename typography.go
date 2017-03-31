@@ -101,12 +101,12 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
             last = buf[0]
             buf = buf[1:]
         } else if nbuf >= 1 && buf[0] == '\'' {
-            // '' to single quotes according to the rule...
+            // '' to single quotes according to the rule and don't to don’t
             if nbuf >= 2 && unicode.IsLetter(last) &&
-                // ...and don't to don’t
                 unicode.IsLetter(buf[1]) {
                 out<- '’'
-            } else if last == 0 || unicode.IsSpace(last) || last == '"' {
+            } else if last == 0 || unicode.IsSpace(last) || last == '"' ||
+                last == '-' {
                 out<- rule.single.opening
             } else {
                 out<- rule.single.closing
