@@ -17,7 +17,7 @@ Four quote styles (`typography.QuoteStyle`) are supported:
 
 - English style: “” (double) and ‘’ (single)
     * `typography.QuoteStyle.English`
-- German style: „“ (double) and ‚‘ (signle)
+- German style: „“ (double) and ‚‘ (single)
     * `typography.QuoteStyle.German`
 - Guillemets: «» (double) and ‹› (single)
     * `typography.QuoteStyle.Guillemets`
