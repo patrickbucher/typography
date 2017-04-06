@@ -95,6 +95,8 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
             // "" to double quotes according to the rule
             if last == 0 || unicode.IsSpace(last) {
                 out<- rule.double.opening
+            } else if nbuf >= 2 && unicode.IsLetter(buf[1]) {
+                out<- rule.double.opening
             } else {
                 out<- rule.double.closing
             }
@@ -107,6 +109,8 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
                 out<- '’'
             } else if last == 0 || unicode.IsSpace(last) || last == '"' ||
                 last == '-' {
+                out<- rule.single.opening
+            } else if nbuf >= 2 && unicode.IsLetter(buf[1]) {
                 out<- rule.single.opening
             } else {
                 out<- rule.single.closing

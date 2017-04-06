@@ -38,6 +38,8 @@ func TestBeautify(t *testing.T) {
         {`Rock'n'Roll`, German, `Rock’n’Roll`},
         {`Rock'n'Roll`, Guillemets, `Rock’n’Roll`},
         {`Rock'n'Roll`, ReverseGuillemets, `Rock’n’Roll`},
+        {`Das ist ("war") ein Test.`, Guillemets, `Das ist («war») ein Test.`},
+        {`"Das ist ('war') ein Test."`, Guillemets, `«Das ist (‹war›) ein Test.»`},
     }
     for _, test := range tests {
         got := Beautify(test.input, test.quoteStyle)
