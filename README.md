@@ -7,14 +7,29 @@ now it's replacing:
 - three dots (...) with an ellipsis (…)
 - two dashes (--) with an ndash (–)
 - three dashes (---) with an mdash (—)
-- double quotes ("") with double guillements («»)
-- single quotes ('') with single guillemets (‹›)
+- double quotes ("") with nice double quotes
+- single quotes ('') with nice single quotes
 - single quotes within words (don't) with an apostrophe (don’)
 
-## TODO
+## Quote Styles
 
-- Multiple sets of quotation marks should be supported, and the client must be
-  able to choose the set he likes to use.
-    - English style: “” and ‘’
-    - German style: „“ and ‚‘
-    - German book style: »« and ›‹
+Four quote styles (`typography.QuoteStyle`) are supported:
+
+- English style: “” (double) and ‘’ (single)
+    * `typography.QuoteStyle.English`
+- German style: „“ (double) and ‚‘ (single)
+    * `typography.QuoteStyle.German`
+- Guillemets: «» (double) and ‹› (single)
+    * `typography.QuoteStyle.Guillemets`
+- Reverse Guillemets: »« (double) and ›‹ (single)
+    * `typography.QuoteStyle.ReverseGuillemets`
+
+## Client
+
+I implemented a tiny client that takes text from `os.Stdin`, beautifies it, and
+writes it to `os.Stdout`. It can be found here:
+
+[smartquotes.go](https://github.com/patrickbucher/go-scratch/blob/master/smartquotes.go)
+
+It supports the quote styles mentioned above using the flags `-e` (English
+style), `-d` (German style), `-g` (Guillemets) and `-r` (reverse Guillemets).
