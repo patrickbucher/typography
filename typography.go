@@ -1,6 +1,9 @@
 package typography
 
-import "unicode"
+import (
+	"strings"
+	"unicode"
+)
 
 type quotePair struct {
 	opening rune
@@ -41,36 +44,33 @@ var quoteRules = map[QuoteStyle]quoteRule{
 }
 
 func Beautify(str string, style QuoteStyle) string {
-	toReplace := make(chan rune)
-	fromReplace := make(chan rune)
-	go replace(toReplace, fromReplace, quoteRules[style])
-	go func() {
-		for _, r := range str {
-			toReplace <- r
+	const fourSpaces = "    "
+	var beautified string
+	verbatimMode := false
+	lines := strings.Split(str, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "```") {
+			verbatimMode = !verbatimMode
 		}
-		close(toReplace)
-	}()
-	beautified := make([]rune, 0)
-	for r := range fromReplace {
-		beautified = append(beautified, r)
+		if !verbatimMode && !strings.HasPrefix(line, "\t") &&
+			!strings.HasPrefix(line, fourSpaces) {
+			beautified += replace(line, style.quoteRule)
+		}
 	}
-	return string(beautified)
+	return beautified
 }
 
-func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
+func replace(in string, rule quoteRule) string {
 	const BUF_SIZE = 5
+	out := make([]rune, 0)
 	buf := make([]rune, 0)
 	drained := false
+	index := 0
 	var last rune
 	for {
-		for !drained && len(buf) < BUF_SIZE {
-			r, ok := <-in
-			if ok {
-				buf = append(buf, r)
-			} else {
-				drained = true
-				break
-			}
+		for index <= len(in) && len(buf) < BUF_SIZE {
+			buf = append(buf, in[index])
+			index++
 		}
 		nbuf := len(buf)
 		if nbuf == 0 {
@@ -79,26 +79,26 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
 		if nbuf >= 2 && buf[0] == '-' && buf[1] == '-' {
 			// --- to — (mdash) and -- to – (ndash)
 			if nbuf >= 3 && buf[2] == '-' {
-				out <- '\u2014'
+				out = append(out, '\u2014')
 				last = buf[2]
 				buf = buf[3:]
 			} else {
-				out <- '\u2013'
+				out = append(out, '\u2013')
 				last = buf[1]
 				buf = buf[2:]
 			}
 		} else if nbuf >= 3 && buf[0] == '.' && buf[1] == '.' && buf[2] == '.' {
 			// ... to ellipsis …
-			out <- '\u2026'
+			out = append(out, '\u2026')
 			buf = buf[3:]
 		} else if nbuf >= 1 && buf[0] == '"' {
 			// "" to double quotes according to the rule
 			if last == 0 || unicode.IsSpace(last) {
-				out <- rule.double.opening
+				out = append(out, rule.double.opening)
 			} else if nbuf >= 2 && unicode.IsLetter(buf[1]) {
-				out <- rule.double.opening
+				out = append(out, rule.double.opening)
 			} else {
-				out <- rule.double.closing
+				out = append(out, rule.double.closing)
 			}
 			last = buf[0]
 			buf = buf[1:]
@@ -106,14 +106,14 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
 			// '' to single quotes according to the rule and don't to don’t
 			if nbuf >= 2 && unicode.IsLetter(last) &&
 				unicode.IsLetter(buf[1]) {
-				out <- '’'
+				out = append(out, '’')
 			} else if last == 0 || unicode.IsSpace(last) || last == '"' ||
 				last == '-' {
-				out <- rule.single.opening
+				out = append(out, rule.single.opening)
 			} else if nbuf >= 2 && unicode.IsLetter(buf[1]) {
-				out <- rule.single.opening
+				out = append(out, rule.single.opening)
 			} else {
-				out <- rule.single.closing
+				out = append(out, rule.single.closing)
 			}
 			last = buf[0]
 			buf = buf[1:]
@@ -123,8 +123,4 @@ func replace(in <-chan rune, out chan<- rune, rule quoteRule) {
 			buf = buf[1:]
 		}
 	}
-	for _, r := range buf {
-		out <- r
-	}
-	close(out)
 }
