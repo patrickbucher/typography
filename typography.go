@@ -48,27 +48,35 @@ func Beautify(str string, style QuoteStyle) string {
 	var beautified string
 	verbatimMode := false
 	lines := strings.Split(str, "\n")
-	for _, line := range lines {
+	if len(lines) == 1 {
+		return replace(str, quoteRules[style])
+	}
+	for i, line := range lines {
 		if strings.HasPrefix(line, "```") {
 			verbatimMode = !verbatimMode
 		}
 		if !verbatimMode && !strings.HasPrefix(line, "\t") &&
 			!strings.HasPrefix(line, fourSpaces) {
-			beautified += replace(line, style.quoteRule)
+			beautified += replace(line, quoteRules[style])
+		} else {
+			beautified += line
+		}
+		if i < len(lines)-1 {
+			beautified += "\n"
 		}
 	}
 	return beautified
 }
 
-func replace(in string, rule quoteRule) string {
+func replace(input string, rule quoteRule) string {
 	const BUF_SIZE = 5
+	in := []rune(input)
 	out := make([]rune, 0)
 	buf := make([]rune, 0)
-	drained := false
 	index := 0
 	var last rune
 	for {
-		for index <= len(in) && len(buf) < BUF_SIZE {
+		for index < len(in) && len(buf) < BUF_SIZE {
 			buf = append(buf, in[index])
 			index++
 		}
@@ -118,9 +126,10 @@ func replace(in string, rule quoteRule) string {
 			last = buf[0]
 			buf = buf[1:]
 		} else {
-			out <- buf[0]
+			out = append(out, buf[0])
 			last = buf[0]
 			buf = buf[1:]
 		}
 	}
+	return string(out)
 }
