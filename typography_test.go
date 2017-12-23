@@ -1,9 +1,12 @@
 package typography
 
-import "testing"
+import (
+	"io/ioutil"
+	"testing"
+)
 
 func TestBeautify(t *testing.T) {
-	tests := []struct {
+	simpleTests := []struct {
 		input      string
 		quoteStyle QuoteStyle
 		expected   string
@@ -41,11 +44,37 @@ func TestBeautify(t *testing.T) {
 		{`Das ist ("war") ein Test.`, Guillemets, `Das ist («war») ein Test.`},
 		{`"Das ist ('war') ein Test."`, Guillemets, `«Das ist (‹war›) ein Test.»`},
 	}
-	for _, test := range tests {
+	advancedTests := []struct {
+		inputFile    string
+		quoteStyle   QuoteStyle
+		expectedFile string
+	}{
+		{"test-input-markdown.md", Guillemets, "test-expected-markdown.md"},
+	}
+
+	for _, test := range simpleTests {
 		got := Beautify(test.input, test.quoteStyle)
 		if got != test.expected {
 			t.Errorf("Beautify(\"%s\") got: %s, expected: %s",
 				test.input, got, test.expected)
+		}
+	}
+
+	readOrFail := func(filename string) string {
+		content, err := ioutil.ReadFile(filename)
+		if err != nil {
+			t.Errorf("Error reading file %s: %v", filename, err)
+		}
+		return string(content)
+	}
+
+	for _, test := range advancedTests {
+		input := readOrFail(test.inputFile)
+		got := Beautify(input, test.quoteStyle)
+		expected := readOrFail(test.expectedFile)
+		if got != expected {
+			t.Errorf("Beautify\n%s\ngot:\n%s\nexpected:\n%s\n", input, got,
+				expected)
 		}
 	}
 }
