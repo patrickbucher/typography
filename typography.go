@@ -15,12 +15,17 @@ type quoteRule struct {
 	double quotePair
 }
 
+// QuoteStyle to be used (English, German, Guillemets or ReverseGuillemets)
 type QuoteStyle int
 
 const (
+	// English style quotes: “” and ‘’
 	English QuoteStyle = iota
+	// German style quotes: „“ and ‚‘
 	German
+	// Guillemets (French style): «» and ‹›
 	Guillemets
+	// ReverseGuillemets (German book style): »« and ›‹
 	ReverseGuillemets
 )
 
@@ -43,6 +48,7 @@ var quoteRules = map[QuoteStyle]quoteRule{
 	},
 }
 
+// Beautify applies replacement rules to enhance the typography of the text
 func Beautify(str string, style QuoteStyle) string {
 	const fourSpaces = "    "
 	var beautified string
@@ -69,14 +75,14 @@ func Beautify(str string, style QuoteStyle) string {
 }
 
 func replace(input string, rule quoteRule) string {
-	const BUF_SIZE = 5
+	const bufSize = 5
 	in := []rune(input)
 	out := make([]rune, 0)
 	buf := make([]rune, 0)
 	index := 0
 	var last rune
 	for {
-		for index < len(in) && len(buf) < BUF_SIZE {
+		for index < len(in) && len(buf) < bufSize {
 			buf = append(buf, in[index])
 			index++
 		}
