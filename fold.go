@@ -6,40 +6,32 @@ import (
 	"unicode"
 )
 
-func Fold(text string, maxLineLength int) string {
-	if maxLineLength < 1 {
+// Fold joins the line of the given text and inserts new line breaks at spaces
+// after length is reached.
+func Fold(text string, length int) string {
+	if length < 1 {
+		// TODO: consider throwing error instead
 		return text
 	}
-	text = strings.Replace(text, "\n", " ", -1)
-	text = strings.Replace(text, "\r", " ", -1)
-	text = strings.TrimSpace(text)
-	runes := []rune(text)
-
+	runes := []rune(squashSpaces(joinLines(text)))
 	buf := bytes.NewBufferString("")
-	size := len(runes)
-	lineBuf := make([]rune, maxLineLength)
+	lineBuf := make([]rune, length)
 	var overflow []rune
-	var last rune
-	var lastSpace int
-	var w int
-	for i := 0; i < size; i++ {
+	var w, lastSpace int
+	for i := 0; i < len(runes); i++ {
 		c := runes[i]
 		if unicode.IsSpace(c) {
-			if unicode.IsSpace(last) || w == 0 {
-				last = c
+			if w == 0 {
 				continue
 			} else {
 				lastSpace = i
 			}
 		}
-		last = c
-
-		if w < maxLineLength {
+		if w < length {
 			lineBuf[w] = c
 			w++
 		}
-
-		if w == maxLineLength {
+		if w == length {
 			cutoff := lastSpace
 			if cutoff >= len(lineBuf) || cutoff == 0 {
 				cutoff = len(lineBuf)
@@ -52,13 +44,13 @@ func Fold(text string, maxLineLength int) string {
 			bufEnd := w
 			if cutoff+1 < bufEnd {
 				overflow = lineBuf[cutoff+1 : bufEnd]
-				lineBuf = make([]rune, maxLineLength)
+				lineBuf = make([]rune, length)
 				for j := 0; j < len(overflow); j++ {
 					lineBuf[j] = overflow[j]
 				}
 				w = len(overflow)
 			} else {
-				lineBuf = make([]rune, maxLineLength)
+				lineBuf = make([]rune, length)
 				w = 0
 			}
 			lastSpace = 0
@@ -70,4 +62,22 @@ func Fold(text string, maxLineLength int) string {
 		buf.WriteRune('\n')
 	}
 	return strings.TrimSpace(buf.String())
+}
+
+func joinLines(text string) string {
+	text = strings.Replace(text, "\n", " ", -1)
+	text = strings.Replace(text, "\r", " ", -1)
+	return strings.TrimSpace(text)
+}
+
+func squashSpaces(text string) string {
+	buf := bytes.NewBufferString("")
+	var last rune
+	for _, r := range []rune(text) {
+		if !unicode.IsSpace(r) || unicode.IsSpace(r) && !unicode.IsSpace(last) {
+			buf.WriteRune(r)
+		}
+		last = r
+	}
+	return buf.String()
 }
