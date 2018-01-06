@@ -49,7 +49,7 @@ func TestBeautify(t *testing.T) {
 		quoteStyle   QuoteStyle
 		expectedFile string
 	}{
-		{"test-input-markdown.md", Guillemets, "test-expected-markdown.md"},
+		{"tests/test-input-markdown.md", Guillemets, "tests/test-expected-markdown.md"},
 	}
 
 	for _, test := range simpleTests {

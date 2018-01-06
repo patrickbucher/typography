@@ -29,6 +29,9 @@ func main() {
 		// default: Guillemets
 		style = typography.Guillemets
 	}
+	// FIXME: line by line processing is a bad idea, because code sections
+	// delimited with ``` won't be processed properly. Use io/ioutil.ReadFile
+	// until a better idea comes up.
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		fmt.Println(typography.Beautify(scanner.Text(), style))

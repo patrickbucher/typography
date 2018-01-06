@@ -9,7 +9,7 @@ now it's replacing:
 - three dashes (---) with an mdash (—)
 - double quotes ("") with nice double quotes
 - single quotes ('') with nice single quotes
-- single quotes within words (don't) with an apostrophe (don’)
+- single quotes within words (don't) with an apostrophe (don’t)
 
 ## Quote Styles
 
@@ -26,10 +26,7 @@ Four quote styles (`typography.QuoteStyle`) are supported:
 
 ## Client
 
-I implemented a tiny client that takes text from `os.Stdin`, beautifies it, and
-writes it to `os.Stdout`. It can be found here:
-
-[smartquotes.go](https://github.com/patrickbucher/go-scratch/blob/master/smartquotes.go)
-
+I implemented a client that takes text from `os.Stdin`, beautifies it, and
+writes it to `os.Stdout`. It can be found in the `cmd` folder (`beautify.go`).
 It supports the quote styles mentioned above using the flags `-e` (English
 style), `-d` (German style), `-g` (Guillemets) and `-r` (reverse Guillemets).
