@@ -1,65 +1,73 @@
-package main
+package typography
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
 	"strings"
 	"unicode"
 )
 
-func main() {
-	fmt.Println(fold("Das ist ein Test.", 10))
-	fmt.Println(fold("abc def ghi jkl mno.", 5))
-}
-
-func fold(text string, maxLineLength int) (string, error) {
+func Fold(text string, maxLineLength int) string {
 	if maxLineLength < 1 {
-		return text, errors.New("maxLineLength must be at least 1")
+		return text
 	}
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	text = strings.TrimSpace(text)
 	runes := []rune(text)
-	size := len(runes)
+
 	buf := bytes.NewBufferString("")
+	size := len(runes)
 	lineBuf := make([]rune, maxLineLength)
 	var overflow []rune
 	var last rune
-	var lastSpace, w int
+	var lastSpace int
+	var w int
 	for i := 0; i < size; i++ {
 		c := runes[i]
 		if unicode.IsSpace(c) {
-			if !unicode.IsSpace(last) {
-				lastSpace = i
-			} else {
+			if unicode.IsSpace(last) || w == 0 {
+				last = c
 				continue
+			} else {
+				lastSpace = i
 			}
 		}
+		last = c
+
 		if w < maxLineLength {
 			lineBuf[w] = c
 			w++
 		}
+
 		if w == maxLineLength {
-			lineEnd := lastSpace + 1
-			if lineEnd > len(lineBuf) {
-				buf.WriteString(string(lineBuf))
-				lineBuf = make([]rune, maxLineLength)
-			} else {
-				buf.WriteString(string(lineBuf[:lineEnd]) + "\n")
-				bufEnd := w
-				overflow = lineBuf[lineEnd:bufEnd]
+			cutoff := lastSpace
+			if cutoff >= len(lineBuf) || cutoff == 0 {
+				cutoff = len(lineBuf)
+			}
+			if unicode.IsSpace(lineBuf[cutoff-1]) && cutoff > 1 {
+				cutoff--
+			}
+			buf.WriteString(string(lineBuf[:cutoff]))
+			buf.WriteRune('\n')
+			bufEnd := w
+			if cutoff+1 < bufEnd {
+				overflow = lineBuf[cutoff+1 : bufEnd]
 				lineBuf = make([]rune, maxLineLength)
 				for j := 0; j < len(overflow); j++ {
 					lineBuf[j] = overflow[j]
 				}
 				w = len(overflow)
+			} else {
+				lineBuf = make([]rune, maxLineLength)
+				w = 0
 			}
+			lastSpace = 0
 		}
 	}
 	rest := string(lineBuf[:w])
 	if len(rest) > 0 {
-		buf.WriteString(rest + "\n")
+		buf.WriteString(rest)
+		buf.WriteRune('\n')
 	}
-	return buf.String(), nil
+	return strings.TrimSpace(buf.String())
 }
