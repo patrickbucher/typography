@@ -1,18 +1,10 @@
-package main
+package typography
 
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"strings"
 )
-
-func main() {
-	text := "This is a test.\nAnd another test.\nAnd yet another test.\nOne more test.\nAnd yet another stupid test.\nAnd here's yet another incredibly stupid test."
-	length := Longest(strings.Split(text, "\n"))
-	justified := Justify(text, length)
-	fmt.Printf("%s\n", justified)
-}
 
 // Justify aligns the text to the left and right edge by filling the word gaps
 // up with spaces until length is reached.
