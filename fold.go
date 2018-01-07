@@ -13,7 +13,7 @@ func Fold(text string, length int) string {
 		// TODO: consider throwing error instead
 		return text
 	}
-	runes := []rune(squashSpaces(joinLines(text)))
+	runes := []rune(SquashSpaces(joinLines(text)))
 	buf := bytes.NewBufferString("")
 	lineBuf := make([]rune, length)
 	var overflow []rune
@@ -24,7 +24,7 @@ func Fold(text string, length int) string {
 			if w == 0 {
 				continue
 			} else {
-				lastSpace = i
+				lastSpace = w
 			}
 		}
 		if w < length {
@@ -70,7 +70,7 @@ func joinLines(text string) string {
 	return strings.TrimSpace(text)
 }
 
-func squashSpaces(text string) string {
+func SquashSpaces(text string) string {
 	buf := bytes.NewBufferString("")
 	var last rune
 	for _, r := range []rune(text) {

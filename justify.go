@@ -13,21 +13,36 @@ func Justify(text string, length int) string {
 	reader := strings.NewReader(text)
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(bufio.ScanLines)
+	switchFillDirection := false
 	for scanner.Scan() {
 		line := scanner.Text()
-		if len(line) > length {
+		nRunes := len([]rune(line))
+		if nRunes > length {
 			// TODO client's problem?
 			continue
 		}
 		words := strings.Fields(line)
-		spaces := make([]string, len(words)-1)
-		diff := length - len(line) + len(spaces) // spaces where omitted, add them back
+		var gaps int
+		if len(words) <= 1 {
+			gaps = 1
+		} else {
+			gaps = len(words) - 1
+		}
+		spaces := make([]string, gaps)
+		diff := length - nRunes + len(spaces) // spaces where omitted, add them back
 		for d, i := diff, 0; d > 0; d-- {
 			spaces[i] += " "
 			i++
 			if i == len(spaces) {
 				i = 0
 			}
+		}
+		// alternate fill direction
+		if switchFillDirection {
+			reverse(&spaces)
+			switchFillDirection = false
+		} else {
+			switchFillDirection = true
 		}
 		justified := bytes.NewBufferString("")
 		for w, s := 0, 0; w < len(words) || s < len(spaces); w, s = w+1, s+1 {
@@ -42,13 +57,18 @@ func Justify(text string, length int) string {
 		output.WriteString(line)
 		output.WriteRune('\n')
 	}
-	return output.String()
+	// left-align last line
+	out := strings.TrimSpace(output.String())
+	from := strings.LastIndex(out, "\n")
+	to := len(out)
+	return out[:from] + SquashSpaces(out[from:to])
 }
 
-func Longest(lines []string) int {
+func LongestLine(text string) int {
 	var longest int
+	lines := strings.Split(text, "\n")
 	for _, v := range lines {
-		l := len(v)
+		l := len([]rune(v))
 		if l > longest {
 			longest = l
 		}
@@ -56,10 +76,10 @@ func Longest(lines []string) int {
 	return longest
 }
 
-func reverse(text *string) {
-	runes := []rune(*text)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
+func reverse(s *[]string) {
+	strings := *s
+	for i, j := 0, len(strings)-1; i < j; i, j = i+1, j-1 {
+		strings[i], strings[j] = strings[j], strings[i]
 	}
-	*text = string(runes)
+	*s = strings
 }
