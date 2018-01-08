@@ -14,7 +14,7 @@ func main() {
 	}
 	text := string(bytes)
 	text = typography.Beautify(text, typography.German)
-	text = typography.Fold(text, 45)
+	text = typography.SimpleFold(text, 45)
 	text = typography.Justify(text, typography.LongestLine(text))
 	fmt.Println(text)
 }

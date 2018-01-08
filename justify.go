@@ -64,18 +64,6 @@ func Justify(text string, length int) string {
 	return out[:from] + SquashSpaces(out[from:to])
 }
 
-func LongestLine(text string) int {
-	var longest int
-	lines := strings.Split(text, "\n")
-	for _, v := range lines {
-		l := len([]rune(v))
-		if l > longest {
-			longest = l
-		}
-	}
-	return longest
-}
-
 func reverse(s *[]string) {
 	strings := *s
 	for i, j := 0, len(strings)-1; i < j; i, j = i+1, j-1 {

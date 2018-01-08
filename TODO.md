@@ -7,3 +7,4 @@
 - write a client that combines `Beautify`, `Fold` and `Justify`
 - improve code using `go lint` and add comments
 - update `README.md`
+- clean up the mess with the two different `fold` implementations

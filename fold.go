@@ -64,20 +64,30 @@ func Fold(text string, length int) string {
 	return strings.TrimSpace(buf.String())
 }
 
+func SimpleFold(text string, length int) string {
+	buf := bytes.NewBufferString("")
+	var n int
+	for _, word := range strings.Fields(text) {
+		l := len([]rune(word))
+		if n+l+1 <= length {
+			if n > 0 {
+				buf.WriteRune(' ')
+				n++
+			}
+		} else {
+			if n > 0 {
+				buf.WriteRune('\n')
+				n = 0
+			}
+		}
+		buf.WriteString(word)
+		n += l
+	}
+	return buf.String()
+}
+
 func joinLines(text string) string {
 	text = strings.Replace(text, "\n", " ", -1)
 	text = strings.Replace(text, "\r", " ", -1)
 	return strings.TrimSpace(text)
-}
-
-func SquashSpaces(text string) string {
-	buf := bytes.NewBufferString("")
-	var last rune
-	for _, r := range []rune(text) {
-		if !unicode.IsSpace(r) || unicode.IsSpace(r) && !unicode.IsSpace(last) {
-			buf.WriteRune(r)
-		}
-		last = r
-	}
-	return buf.String()
 }
