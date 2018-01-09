@@ -6,6 +6,7 @@ import (
 	"unicode"
 )
 
+// SquashSpaces removes excess whitespace between words.
 func SquashSpaces(text string) string {
 	buf := bytes.NewBufferString("")
 	var last rune
@@ -18,6 +19,7 @@ func SquashSpaces(text string) string {
 	return buf.String()
 }
 
+// LongestLine counts the rune length of the longest line.
 func LongestLine(text string) int {
 	var longest int
 	lines := strings.Split(text, "\n")
