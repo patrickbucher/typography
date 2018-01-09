@@ -16,33 +16,15 @@ var tests = []struct {
 
 func TestFold(t *testing.T) {
 	for _, test := range tests {
-		if got, ok := execute(Fold, test.length, test.input, test.expected); !ok {
+		got := Fold(test.input, test.length)
+		if got != test.expected {
 			t.Errorf("expected: %q\ngot: %q\n", test.expected, got)
 		}
 	}
-}
-
-func TestSimpleFold(t *testing.T) {
-	for _, test := range tests {
-		if got, ok := execute(SimpleFold, test.length, test.input, test.expected); !ok {
-			t.Errorf("expected: %q\ngot: %q\n", test.expected, got)
-		}
-	}
-}
-
-func execute(f func(string, int) string, length int, input, expected string) (string, bool) {
-	got := f(input, length)
-	return got, got == expected
 }
 
 func BenchmarkFold(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		Fold("This is another test used for benchmarking.", 16)
-	}
-}
-
-func BenchmarkSimpleFold(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		SimpleFold("This is another test used for benchmarking.", 16)
 	}
 }
