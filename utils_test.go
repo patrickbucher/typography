@@ -27,7 +27,7 @@ func TestLongestLine(t *testing.T) {
 	}
 	for _, test := range tests {
 		if got := LongestLine(test.input); got != test.expected {
-			t.Errorf("expected: \"%s\"\n,  got: \"%d\"\n", test.expected, got)
+			t.Errorf("expected: \"%d\"\n,  got: \"%d\"\n", test.expected, got)
 		}
 	}
 }
