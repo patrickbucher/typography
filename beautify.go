@@ -118,8 +118,9 @@ func replace(input string, rule quoteRule) string {
 			buf = buf[1:]
 		} else if nbuf >= 1 && buf[0] == '\'' {
 			// '' to single quotes according to the rule and don't to don’t
-			if nbuf >= 2 && unicode.IsLetter(last) &&
-				unicode.IsLetter(buf[1]) {
+			if nbuf >= 2 &&
+				(unicode.IsLetter(last) && unicode.IsLetter(buf[1]) ||
+					unicode.IsDigit(last) && unicode.IsDigit(buf[1])) {
 				out = append(out, '’')
 			} else if last == 0 || unicode.IsSpace(last) || last == '"' ||
 				last == '-' {

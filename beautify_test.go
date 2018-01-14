@@ -41,6 +41,10 @@ func TestBeautify(t *testing.T) {
 		{`Rock'n'Roll`, German, `Rock’n’Roll`},
 		{`Rock'n'Roll`, Guillemets, `Rock’n’Roll`},
 		{`Rock'n'Roll`, ReverseGuillemets, `Rock’n’Roll`},
+		{`98'765'432.1`, English, `98’765’432.1`},
+		{`98'765'432.1`, German, `98’765’432.1`},
+		{`98'765'432.1`, Guillemets, `98’765’432.1`},
+		{`98'765'432.1`, ReverseGuillemets, `98’765’432.1`},
 		{`Das ist ("war") ein Test.`, Guillemets, `Das ist («war») ein Test.`},
 		{`"Das ist ('war') ein Test."`, Guillemets, `«Das ist (‹war›) ein Test.»`},
 	}
