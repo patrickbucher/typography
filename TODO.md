@@ -7,3 +7,4 @@
 - improve code using `go lint` and add comments
 - update `README.md`
 - consider writing an implementation of `SquashSpaces` using `strings.Fields()`
+- handle apostrophes at the end of the word properly: Kolumbus' -> Kolumbus’
