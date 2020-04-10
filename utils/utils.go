@@ -1,4 +1,4 @@
-package typography
+package utils
 
 import (
 	"bytes"

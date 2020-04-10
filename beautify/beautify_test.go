@@ -1,4 +1,4 @@
-package typography
+package beautify
 
 import (
 	"io/ioutil"
@@ -53,7 +53,7 @@ func TestBeautify(t *testing.T) {
 		quoteStyle   QuoteStyle
 		expectedFile string
 	}{
-		{"tests/test-input-markdown.md", Guillemets, "tests/test-expected-markdown.md"},
+		{"../tests/test-input-markdown.md", Guillemets, "../tests/test-expected-markdown.md"},
 	}
 
 	for _, test := range simpleTests {

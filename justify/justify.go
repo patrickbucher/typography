@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"strings"
+
+	"github.com/patrickbucher/typography/utils"
 )
 
 // Justify aligns the text to the left and right edge by filling the word gaps
@@ -61,7 +63,7 @@ func Justify(text string, length int) string {
 	out := strings.TrimSpace(output.String())
 	from := strings.LastIndex(out, "\n")
 	to := len(out)
-	return out[:from] + SquashSpaces(out[from:to])
+	return out[:from] + utils.SquashSpaces(out[from:to])
 }
 
 func reverse(s *[]string) {

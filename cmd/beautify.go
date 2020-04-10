@@ -6,7 +6,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"typography"
+
+	"github.com/patrickbucher/typography/beautify"
 )
 
 func main() {
@@ -15,25 +16,25 @@ func main() {
 	g := flag.Bool("g", false, "Guillemets: «»")
 	r := flag.Bool("r", false, "Reverse Guillemets: »«")
 	flag.Parse()
-	var style typography.QuoteStyle
+	var style beautify.QuoteStyle
 	if *e {
-		style = typography.English
+		style = beautify.English
 	} else if *d {
-		style = typography.German
+		style = beautify.German
 	} else if *g {
-		style = typography.Guillemets
+		style = beautify.Guillemets
 	} else if *r {
-		style = typography.ReverseGuillemets
+		style = beautify.ReverseGuillemets
 	}
 	if style == 0 {
 		// default: Guillemets
-		style = typography.Guillemets
+		style = beautify.Guillemets
 	}
 	// FIXME: line by line processing is a bad idea, because code sections
 	// delimited with ``` won't be processed properly. Use io/ioutil.ReadFile
 	// until a better idea comes up.
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		fmt.Println(typography.Beautify(scanner.Text(), style))
+		fmt.Println(beautify.Beautify(scanner.Text(), style))
 	}
 }

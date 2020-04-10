@@ -1,4 +1,4 @@
-package typography
+package folding
 
 import (
 	"bytes"
